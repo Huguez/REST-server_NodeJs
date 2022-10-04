@@ -1,4 +1,5 @@
 const { request, responce } = require( "express" )
+const User = require( '../models/user' )
 
 const getUser = ( req = request, res = responce ) => {
    try {
@@ -34,14 +35,16 @@ const putUser = ( req = request, res = responce ) => {
    }
 }
 
-const postUser = ( req = request, res = responce ) => {
+const postUser = async ( req = request, res = responce ) => {
    try {
       const data = req.body
-      console.log( data );
+      const usuario = new User( data )
+
+      await usuario.save()
 
       return res.status( 200 ).json( {
          msg: "Hello POST!!!",
-         user: data,
+         user: usuario,
       } )
    } catch ( error ) {
       return res.status( 500 ).json( {
