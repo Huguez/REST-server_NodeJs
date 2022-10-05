@@ -2,7 +2,6 @@ const { request, responce } = require( "express" )
 const bcryptjs = require( "bcryptjs" )
 
 const User = require( '../models/user' )
-const { validationResult } = require("express-validator")
 
 const getUser = ( req = request, res = responce ) => {
    try {
@@ -40,11 +39,7 @@ const putUser = ( req = request, res = responce ) => {
 
 const postUser = async ( req = request, res = responce ) => {
    try {
-      const errors = validationResult( req )
-      if (!errors.isEmpty() ) {
-         return res.status( 400 ).json( errors )   
-      }
-
+      
       const { google, ...resp } = req.body
       
       const usuario = new User( resp )
@@ -63,7 +58,6 @@ const postUser = async ( req = request, res = responce ) => {
       await usuario.save()
 
       return res.status( 200 ).json( {
-         msg: "Hello POST!!!",
          user: usuario,
       } )
    } catch ( error ) {
