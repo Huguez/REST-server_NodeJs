@@ -78,7 +78,8 @@ const postUser = async ( req = request, res = responce ) => {
 const deleteUser = async ( req = request, res = responce ) => {
    try{
       const { id } = req.params
-      
+      // const userAuth = req.user
+
       const usuario = await User.findByIdAndUpdate( id, { state: false } )
 
       return res.status( 200 ).json( {
