@@ -12,13 +12,19 @@ const validarEmail = async ( email ) => {
    const existeEmail = await User.findOne( { email } )
    if( existeEmail ){
       throw new Error( `El email ${ email } ya esta registrado en la BD` )
-      // return res.status( 400 ).json( {
-      //    msg: "Correo ya registrado"
-      // } )
+   }
+}
+
+
+const validarExisteUser = async ( id ) => {
+   const existeUser = await User.findOne( { id } )
+   if( !existeUser ){
+      throw new Error( `El usuario con ${ id } No esta registrado en la BD` )
    }
 }
    
 module.exports = {
    validarRole,
-   validarEmail
+   validarEmail,
+   validarExisteUser
 }
