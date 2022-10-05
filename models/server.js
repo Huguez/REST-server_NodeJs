@@ -8,6 +8,7 @@ class Server {
       this.app = express()
       this.port = process.env.PORT
       this.userRoutePath = "/api/usuarios"
+      this.authPath = "/api/auth"
 
       this.conectarDB()
 
@@ -33,11 +34,11 @@ class Server {
 
 
    routes() {
-      
       this.app.use( this.userRoutePath, require( '../routes/user' ) )
+      this.app.use( this.authPath, require( '../routes/auth' ) )
    }
 
-   listen(){
+   start(){
       this.app.listen( this.port, () => {
          console.log(`Server running in ${ this.port }`);
          console.log(`Go to http://localhost:${ this.port }/` );
