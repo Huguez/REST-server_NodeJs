@@ -2,12 +2,23 @@ const { request, responce } = require( "express" )
 const bcryptjs = require( "bcryptjs" )
 
 const User = require( '../models/user' )
-const user = require("../models/user")
 
-const getUser = ( req = request, res = responce ) => {
+const getUsers = async ( req = request, res = responce ) => {
    try {
+      const { limite = 5, desde = 0 } = req.query
+      
+      // const usuarios = await User.find( { state: true } ).limit( Number( limite )  ).skip( Number( desde ) )
+
+      const [ total, users ] = await Promise.all( [
+         User.countDocuments( { state: true } ),
+         User.find( { state: true } ).limit( Number( limite )  ).skip( Number( desde ) )
+      ] )
+
       return res.status( 200 ).json( {
-         msg: "Hello GET!!!",
+         total, 
+         users
+         // total: usuarios.length,
+         // users: usuarios.map( u => ({ id: u._id, email: u.email, role: u.role }) ),
       } )
    } catch ( error ) {
       console.log( error );
@@ -64,14 +75,24 @@ const postUser = async ( req = request, res = responce ) => {
    }
 }
 
-const deleteUser = ( req = request, res = responce ) => {
-   return res.status( 200 ).json( {
-      msg: "Hello DELETE!!!",
-   } )
+const deleteUser = async ( req = request, res = responce ) => {
+   try{
+      const { id } = req.params
+      
+      const usuario = await User.findByIdAndUpdate( id, { state: false } )
+
+      return res.status( 200 ).json( {
+         user: usuario
+      } )
+   } catch ( error ) {
+      return res.status( 500 ).json( {
+         error
+      } )
+   }
 }
 
 module.exports = {
-   getUser,
+   getUsers,
    putUser,
    postUser,
    deleteUser
