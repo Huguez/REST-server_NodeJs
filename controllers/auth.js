@@ -1,14 +1,14 @@
 const { request, responce } = require("express");
 const bcryptjs = require( 'bcryptjs' )
 
-const Usuario = require( '../models/user' );
+const { User } = require( '../models' );
 const { generarJWT } = require("../helpers/generarJWT");
 
 const login = async ( req = request, res = responce ) => {
    try {
       const { email, password } = req.body
       
-      const user = await Usuario.findOne( { email } ) 
+      const user = await User.findOne( { email } ) 
 
       if( !user ) {
          return res.status( 400 ).json( {
@@ -31,7 +31,7 @@ const login = async ( req = request, res = responce ) => {
 
       const token = await generarJWT( user.id )
 
-      return res.status( 400 ).json({
+      return res.status( 200 ).json({
          user,
          token,
       })
