@@ -14,7 +14,7 @@ const validarJWT = async ( req = request, res = response , next ) => {
       }
       
       const { id } = jwt.verify( token, key )
-
+      // console.log( id );
       const user = await User.findById( id )
 
       if( !user ){

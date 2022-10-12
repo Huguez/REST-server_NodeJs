@@ -1,12 +1,18 @@
-const { request, responce } = require( 'express' )
+const { request, response } = require( 'express' )
 const { Category } = require( "../models" )
 
-const getCategorys = ( req = request, res = responce ) => {
+const getCategorys = async ( req = request, res = response ) => {
    try {
-      const categorias = "getCategorys"
+      const { limite = 5, desde = 0 } = req.query
+
+      const [ total, categorias ] = await Promise.all( [
+         (await Category.find( { state: true } )).length,
+         Category.find({ state: true }).limit( Number( limite ) ).skip( Number( desde ) ).populate( 'user', 'name' )
+      ] )
 
       return res.status( 200 ).json( {
-         categorias
+         total,
+         categorias,
       } )
 
    } catch ( error ) {
@@ -17,13 +23,13 @@ const getCategorys = ( req = request, res = responce ) => {
    }
 }
 
-const getCategory = ( req = request, res = responce ) => {
+const getCategory = async ( req = request, res = response ) => {
    try {
-      const categoria = "getCategory"
+      const { params:{ id } } = req
 
-      return res.status( 200 ).json( {
-         categoria
-      } )
+      const c = await Category.findById( id ).populate( 'user', 'name' )
+      
+      return res.status( 200 ).json( c )
 
    } catch (error) {
       console.log( error );
@@ -33,13 +39,30 @@ const getCategory = ( req = request, res = responce ) => {
    }
 }
 
-const postCategory = ( req = request, res = responce ) => {
+const postCategory = async ( req = request, res = response ) => {
    try {
-      const categoria = "postCategory"
+      const { name } = req.body
 
-      return res.status( 200 ).json( {
-         categoria
-      } )
+      const nombre = name.toUpperCase();
+
+      const existe = await Category.findOne( { name: nombre } )
+      if( existe ) {
+         return res.status( 400 ).json( {
+            msg: `La categoria ${ name } ya existe`
+         } );
+      }
+
+      const data = {
+         name: nombre,
+         user: req.user._id
+      }
+
+      const c = new Category( data )
+      await c.save()
+
+      const { __v, state, ...rest } = c["_doc"]
+
+      return res.status( 201 ).json( { ...rest } )
 
    } catch (error) {
       console.log( error );
@@ -49,13 +72,17 @@ const postCategory = ( req = request, res = responce ) => {
    }
 }
 
-const putCategory = ( req = request, res = responce ) => {
+const putCategory = async ( req = request, res = response ) => {
    try {
-      const categoria = "putCategory"
+      const { body:{ name }, params:{ id } } = req
 
-      return res.status( 200 ).json( {
-         categoria
-      } )
+      const nombre = name.toUpperCase();
+      
+      let aux = await Category.findByIdAndUpdate( id, { name: nombre }, { new: true } ).populate( 'user', ['name', 'email', 'role'] )
+      
+      await aux.save()
+
+      return res.status( 200 ).json( aux )
 
    } catch (error) {
       console.log( error );
@@ -65,13 +92,15 @@ const putCategory = ( req = request, res = responce ) => {
    }
 }
 
-const deleteCategory = ( req = request, res = responce ) => {
+const deleteCategory = async( req = request, res = response ) => {
    try {
-      const categoria = "deleteCategory"
+      const { params:{ id } } = req
 
-      return res.status( 200 ).json( {
-         categoria
-      } )
+      let aux = await Category.findByIdAndUpdate( id, { state: false }, { new: true } ).populate( 'user', ['name', 'email', 'role'] )
+      
+      await aux.save()
+
+      return res.status( 200 ).json( aux )
 
    } catch (error) {
       console.log( error );
