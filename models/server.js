@@ -7,11 +7,13 @@ class Server {
    constructor(){
       this.app = express()
       this.port = process.env.PORT
+      this.base = '/api'
       this.paths = {
-         userRoutePath: "/api/usuarios",
-         authPath:      "/api/auth",
-         categoryPath:  "/api/categorias",
-         productPath:   "/api/productos"
+         userRoutePath: `${ this.base }/usuarios`,
+         authPath:      `${ this.base }/auth`,
+         categoryPath:  `${ this.base }/categorias`,
+         productPath:   `${ this.base }/productos`,
+         searchtPath:   `${ this.base }/search`
       }
 
       this.conectarDB()
@@ -42,6 +44,8 @@ class Server {
       this.app.use( this.paths["authPath"],      require( '../routes/auth' ) )
       this.app.use( this.paths["categoryPath"],  require( '../routes/category' ) )
       this.app.use( this.paths["productPath"],   require( '../routes/producto' ) )
+      this.app.use( this.paths["searchtPath"],   require( '../routes/buscar' ) )
+      
    }
 
    start(){
