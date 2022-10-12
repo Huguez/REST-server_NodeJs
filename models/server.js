@@ -8,9 +8,10 @@ class Server {
       this.app = express()
       this.port = process.env.PORT
       this.paths = {
-         userRoutePath : "/api/usuarios",
-         authPath : "/api/auth",
-         categoryPath : "/api/categorias",
+         userRoutePath: "/api/usuarios",
+         authPath:      "/api/auth",
+         categoryPath:  "/api/categorias",
+         productPath:   "/api/productos"
       }
 
       this.conectarDB()
@@ -40,7 +41,7 @@ class Server {
       this.app.use( this.paths["userRoutePath"], require( '../routes/user' ) )
       this.app.use( this.paths["authPath"],      require( '../routes/auth' ) )
       this.app.use( this.paths["categoryPath"],  require( '../routes/category' ) )
-
+      this.app.use( this.paths["productPath"],   require( '../routes/producto' ) )
    }
 
    start(){

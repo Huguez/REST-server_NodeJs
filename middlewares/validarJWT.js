@@ -14,7 +14,7 @@ const validarJWT = async ( req = request, res = response , next ) => {
       }
       
       const { id } = jwt.verify( token, key )
-      // console.log( id );
+
       const user = await User.findById( id )
 
       if( !user ){
@@ -35,7 +35,8 @@ const validarJWT = async ( req = request, res = response , next ) => {
    } catch ( error ) {
       console.log( error );
       return res.status( 500 ).json( {
-         msg: "Token - Hable con el admin"
+         msg: "Token - Hable con el admin",
+         error
       } )
    }
 

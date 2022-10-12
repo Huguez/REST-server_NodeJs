@@ -1,7 +1,14 @@
 const Role = require('../models')
 const User = require( '../models' )
+const { Product } = require( '../models' )
 const { Category } = require('../models')
 
+const existeProducto = async ( id ) => {      
+   const p = await Product.findById( id ).findOne({ state: true })
+   if( !p ) {
+      throw new Error( `No hay una categoria activa con el id: ${ id }` )
+   }
+}
 
 const existeCategoria = async ( id ) => {      
    const c = await Category.findById( id ).findOne({ state: true })
@@ -36,5 +43,6 @@ module.exports = {
    validarRole,
    validarEmail,
    validarExisteUser,
-   existeCategoria
+   existeCategoria,
+   existeProducto
 }
