@@ -1,5 +1,7 @@
 const express = require( 'express' )
 const cors = require( 'cors' )
+const fileUpload = require('express-fileupload')
+
 const { dbConnect } = require( '../databases/config' )
 
 class Server {
@@ -9,11 +11,12 @@ class Server {
       this.port = process.env.PORT
       this.base = '/api'
       this.paths = {
-         userRoutePath: `${ this.base }/usuarios`,
-         authPath:      `${ this.base }/auth`,
-         categoryPath:  `${ this.base }/categorias`,
-         productPath:   `${ this.base }/productos`,
-         searchtPath:   `${ this.base }/search`
+         userPath:     `${ this.base }/usuarios`,
+         authPath:     `${ this.base }/auth`,
+         categoryPath: `${ this.base }/categorias`,
+         productPath:  `${ this.base }/productos`,
+         searchtPath:  `${ this.base }/search`,
+         uploadPath:   `${ this.base }/uploads`
       }
 
       this.conectarDB()
@@ -36,16 +39,22 @@ class Server {
 
       // parseo del body
       this.app.use( express.json() );
+
+      // file manage
+      this.app.use( fileUpload({
+         useTempFiles : true,
+         tempFileDir : '/tmp/'
+      }) )
    }
 
 
    routes() {
-      this.app.use( this.paths["userRoutePath"], require( '../routes/user' ) )
-      this.app.use( this.paths["authPath"],      require( '../routes/auth' ) )
-      this.app.use( this.paths["categoryPath"],  require( '../routes/category' ) )
-      this.app.use( this.paths["productPath"],   require( '../routes/producto' ) )
-      this.app.use( this.paths["searchtPath"],   require( '../routes/buscar' ) )
-      
+      this.app.use( this.paths["userPath"],     require( '../routes/user' ) )
+      this.app.use( this.paths["authPath"],     require( '../routes/auth' ) )
+      this.app.use( this.paths["categoryPath"], require( '../routes/category' ) )
+      this.app.use( this.paths["productPath"],  require( '../routes/producto' ) )
+      this.app.use( this.paths["searchtPath"],  require( '../routes/buscar' ) )
+      this.app.use( this.paths["uploadPath"],   require( '../routes/upload' ) )
    }
 
    start(){
