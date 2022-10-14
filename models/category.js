@@ -15,6 +15,9 @@ const Category = Schema({
       ref: "User",
       required: true
    },
+   img: {
+      type: String,
+   }
    
 })
 

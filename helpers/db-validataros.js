@@ -38,11 +38,19 @@ const validarExisteUser = async ( id ) => {
       throw new Error( `El usuario con ${ id } No esta registrado en la BD` )
    }
 }
+
+const coleccionesPermitidas = ( col, colPerm ) => {
+   if( !colPerm.includes( col ) ){
+      throw new Error( `La collecion ${ col } No esta permitida` )
+   }
+   return true
+} 
    
 module.exports = {
    validarRole,
    validarEmail,
    validarExisteUser,
    existeCategoria,
-   existeProducto
+   existeProducto,
+   coleccionesPermitidas,
 }
