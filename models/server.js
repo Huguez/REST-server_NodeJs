@@ -1,16 +1,21 @@
 const express = require( 'express' )
+const { createServer } = require( 'http' )
 const cors = require( 'cors' )
 const fileUpload = require('express-fileupload')
 
 const { dbConnect } = require( '../databases/config' )
+const { socketController } = require('../sockets/socketController')
 
 class Server {
 
    constructor(){
-      this.app = express()
-      this.port = process.env.PORT
-      this.base = '/api'
-      this.paths = {
+      this.app    = express()
+      this.server = createServer( this.app )
+      this.io     = require( 'socket.io' )( this.server )
+
+      this.port   = process.env.PORT
+      this.base   = '/api'
+      this.paths  = {
          userPath:     `${ this.base }/usuarios`,
          authPath:     `${ this.base }/auth`,
          categoryPath: `${ this.base }/categorias`,
@@ -24,10 +29,17 @@ class Server {
       this.middlewares()
 
       this.routes()
+
+      this.sockets()
    }
 
    async conectarDB(){
       await dbConnect()
+   }
+
+   sockets(){
+      this.io.on( 'connection', socketController )
+      
    }
 
    middlewares() {
@@ -59,7 +71,7 @@ class Server {
    }
 
    start(){
-      this.app.listen( this.port, () => {
+      this.server.listen( this.port, () => {
          console.log(`Server running in ${ this.port }`);
          console.log(`Go to http://localhost:${ this.port }/` );
       } );

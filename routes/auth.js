@@ -1,6 +1,7 @@
 const { Router } = require( 'express' )
 const { check } = require('express-validator')
-const { login } = require('../controllers/auth')
+const { login, renew } = require('../controllers/auth')
+const { validarJWT } = require('../middlewares')
 const { validarCampos } = require( '../middlewares/validarCampos' )
 
 const router = Router()
@@ -11,7 +12,11 @@ router.post( '/login',[
    validarCampos
 ],  login )
 
-
+router.get( '/renew', [
+   validarJWT,
+   check( 'id_token', "El id_token es necesario" ).not().isEmpty(),
+   validarCampos
+], renew )
 
 
 module.exports = router
