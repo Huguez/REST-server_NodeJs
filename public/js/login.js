@@ -22,6 +22,7 @@ myForm.addEventListener( 'submit', e => {
    } ).then( resp => resp.json() ).then( ({ token }) => {
       
       localStorage.setItem( 'x-token', token )
+      window.location = "chat.html"
 
    } ).catch( err => console.log( err ) )
 

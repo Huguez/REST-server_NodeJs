@@ -1,7 +1,15 @@
+const { comprobarJWT } = require( '../helpers' )
 
 
-const socketController = ( socket ) => {
-   console.log( "cliente: ", socket.id );
+const socketController = async ( socket ) => {
+   const token = socket.handshake.headers["x-token"]
+   const usuario = await comprobarJWT( token )
+   
+   if( !usuario ){
+      return socket.disconnect()
+   }
+
+   console.log( "se conecto: ", usuario.name );
 }
 
 module.exports = {

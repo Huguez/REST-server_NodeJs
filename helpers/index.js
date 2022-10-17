@@ -6,7 +6,7 @@ const {
    coleccionesPermitidas,
    existeProducto }  = require( "./db-validataros" )
 
-   const { generarJWT }  = require( "./generarJWT" )
+   const { generarJWT, comprobarJWT }  = require( "./generarJWT" )
 
 const { subirFile } = require( "./subirFile" )
 
@@ -17,6 +17,7 @@ module.exports = {
    existeCategoria,
    existeProducto,
    generarJWT,
+   comprobarJWT,
    subirFile,
    coleccionesPermitidas,
 }

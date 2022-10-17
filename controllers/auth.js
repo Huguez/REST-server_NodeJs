@@ -47,8 +47,10 @@ const renew = async ( req = request, res = responce ) => {
    try {
       const { user } = req
 
+      const token = await generarJWT( user.id )
 
       return res.status( 200 ).json( {
+         token,
          user
       } )
    } catch ( error ) {

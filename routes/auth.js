@@ -14,7 +14,6 @@ router.post( '/login',[
 
 router.get( '/renew', [
    validarJWT,
-   check( 'id_token', "El id_token es necesario" ).not().isEmpty(),
    validarCampos
 ], renew )
 
