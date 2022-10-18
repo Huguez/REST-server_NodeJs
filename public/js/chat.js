@@ -1,8 +1,32 @@
-
-
 const url = ( window.location.hostname.includes( "localhost" ) ) ? 'http://localhost:7070/api/auth/' : ''
 
 let usuario = null
+let socket = null
+
+const btnLogout    = document.querySelector( "#btnLogout" )
+const listMensajes = document.querySelector( "#listMensajes" )
+const listUsers    = document.querySelector( "#listUsers" )
+const txtMSG       = document.querySelector( "#txtMSG" )
+const txtUID       = document.querySelector( "#txtUID" )
+
+
+const dibujarUsuarios = ( users = [] ) => {
+
+   let usersHtml = ''
+
+   users.forEach( ( { name, uid } ) => {
+      usersHtml += `
+         <li>
+            <p>
+               <h4 class="text-success">${ name }</h4>
+               <span class="text-muted">${ uid }</span>
+            </p>
+         </li>
+      `
+   } )
+
+   listUsers.innerHTML = usersHtml
+}
 
 const validarJWT = async ( ) => {
 
@@ -28,16 +52,54 @@ const validarJWT = async ( ) => {
 }
 
 const conectarSocket = async () => {
-   const socket = io({
+   socket = io({
       'extraHeaders': {
          'x-token': localStorage.getItem( 'x-token' )
       }
    })
    
+   socket.on( 'connect', () => {
+      console.log("Sockets online!!!");
+   } )
+
+   socket.on( 'disconnect', () => {
+      console.log("Sockets off-line");
+   } )
+
+   socket.on( 'send-msg', ( payload ) => {
+      console.log( "send-msg: ", payload );
+
+   } )
+
+   socket.on( 'receive-msg', ( payload ) => {
+      console.log( payload );
+   } )   
+
+   socket.on( 'users-active', dibujarUsuarios )
+
+   socket.on( 'private-msg', () => {
+      console.log( "private-msg" );
+   } )
+
 }
+
+txtMSG.addEventListener( "keyup", ( e ) => {
+   
+   const mensaje = txtMSG.value
+   const uid = txtUID.value
+   
+   if( e.keyCode !== 13 ) { return }
+   if( mensaje.length === 0 ) { return }
+
+   socket.emit( 'send-msg', { mensaje, uid } )
+
+   txtMSG.value = ''
+} )
 
 const main  = async (  ) => {
    await  validarJWT()
 }
+
+dibujarUsuarios()
 
 main()
