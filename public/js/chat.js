@@ -28,6 +28,23 @@ const dibujarUsuarios = ( users = [] ) => {
    listUsers.innerHTML = usersHtml
 }
 
+const dibujarMensajes = ( msgs = [] ) => {
+   let msgsHtml = ''
+   console.log( msgs );
+   msgs.reverse().forEach( ( { mensaje, nombre } ) => {
+      msgsHtml += `
+         <li>
+            <p>
+               <span class="text-primary"> ${ nombre }: </span>
+               <span> ${ mensaje } </span>   
+            </p>
+         </li>
+      `
+   } )
+
+   listMensajes.innerHTML = msgsHtml
+}
+
 const validarJWT = async ( ) => {
 
    const xToken = localStorage.getItem( 'x-token' ) || ""
@@ -71,14 +88,13 @@ const conectarSocket = async () => {
 
    } )
 
-   socket.on( 'receive-msg', ( payload ) => {
-      console.log( payload );
-   } )   
+   socket.on( 'receive-msg', dibujarMensajes )   
 
    socket.on( 'users-active', dibujarUsuarios )
 
-   socket.on( 'private-msg', () => {
-      console.log( "private-msg" );
+   socket.on( 'private-msg', ( { de, mensaje } ) => {
+      // console.log( "private-msg: ", payload );
+      alert( `${ mensaje } de ${ de }` )
    } )
 
 }
@@ -99,7 +115,5 @@ txtMSG.addEventListener( "keyup", ( e ) => {
 const main  = async (  ) => {
    await  validarJWT()
 }
-
-dibujarUsuarios()
 
 main()

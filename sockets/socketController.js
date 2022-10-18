@@ -17,14 +17,24 @@ const socketController = async ( socket, io ) => {
 
    io.emit( 'users-active', chatM.usuariosArr )
 
+   socket.emit( 'receive-msg', chatM.last10 )
+
+   socket.join( usuario._id.toString() );
+   
+
    socket.on( 'disconnect', () => {
       chatM.desconectarUsuario( usuario._id.toString() )
       io.emit( 'users-active', chatM.usuariosArr )
    } )
 
-   socket.on( 'send-msg', ( { mensaje } ) => {
-      chatM.enviarMensaje( usuario._id.toString(), usuario.name, mensaje )
-      io.emit( 'receive-msg', chatM.last10 )
+   socket.on( 'send-msg', ( { uid, mensaje } ) => {
+      
+      if( uid ){
+         socket.to( uid ).emit( 'private-msg', { de: usuario.name, mensaje } )
+      }else{  
+         chatM.enviarMensaje( usuario._id.toString(), usuario.name, mensaje )
+         io.emit( 'receive-msg', chatM.last10 )
+      }
    } )
 }
 

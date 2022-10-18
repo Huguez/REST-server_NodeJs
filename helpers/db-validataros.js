@@ -1,7 +1,9 @@
-const Role = require('../models')
-const User = require( '../models' )
-const { Product } = require( '../models' )
-const { Category } = require('../models')
+const { 
+   Role,
+   User,
+   Product,
+   Category 
+} = require('../models')
 
 const existeProducto = async ( id ) => {      
    const p = await Product.findById( id ).findOne({ state: true })
